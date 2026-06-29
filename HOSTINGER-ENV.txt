@@ -1,0 +1,12 @@
+# Hostinger Environment Variables
+
+AUTH_SECRET=7aa657971b1241e14b5f6d83d82643a646e8f44fe537462ace5374d34aaf46dd
+NEXT_PUBLIC_APP_URL=https://YOUR-DOMAIN.com
+NODE_ENV=production
+
+# hPanel Build Settings:
+#   Framework: Next.js (or Other → output .next)
+#   Node.js: 20
+#   Install: npm ci
+#   Build:   npm run build
+#   Start:   npm run start:hostinger
