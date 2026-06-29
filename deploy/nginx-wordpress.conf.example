@@ -1,0 +1,62 @@
+# إعداد Nginx — WordPress + Next.js على نفس السيرفر
+
+# الخيار 1 (مُوصى به): دومين/سابدومين منفصل للتطبيق
+# WordPress: https://yourclinic.com
+# الحجز واللوحة: https://book.yourclinic.com
+
+server {
+    listen 443 ssl http2;
+    server_name book.yourclinic.com;
+
+    ssl_certificate     /etc/letsencrypt/live/book.yourclinic.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/book.yourclinic.com/privkey.pem;
+
+    # حد أقصى لرفع الشعار
+    client_max_body_size 2m;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+# الخيار 2: نفس الدومين — WordPress في الجذر و Next.js على مسارات محددة
+# يتطلب ضبط NEXT_PUBLIC_APP_URL=https://yourclinic.com
+
+# server {
+#     listen 443 ssl http2;
+#     server_name yourclinic.com;
+#
+#     root /var/www/wordpress;
+#     index index.php;
+#
+#     # Next.js — الحجز واللوحة والـ API
+#     location ~ ^/(book|login|dashboard|api|c)(/|$) {
+#         proxy_pass http://127.0.0.1:3000;
+#         proxy_set_header Host $host;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#     }
+#
+#     # Next.js static assets
+#     location /_next/ {
+#         proxy_pass http://127.0.0.1:3000;
+#         proxy_set_header Host $host;
+#     }
+#
+#     location / {
+#         try_files $uri $uri/ /index.php?$args;
+#     }
+#
+#     location ~ \.php$ {
+#         include snippets/fastcgi-php.conf;
+#         fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+#     }
+# }

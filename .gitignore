@@ -32,6 +32,18 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# local database (backup separately for Hostinger deploy)
+/data/db.json
+!/data/.gitkeep
+
+# Hostinger deploy output
+hostinger-upload/
+.hostinger-staging/
+.hostinger-staging.zip
+hostinger-upload.zip
+HOSTINGER-ENV.txt
 
 # vercel
 .vercel

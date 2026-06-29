@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# نظام إدارة العيادة — Kadina / RaaCare
 
-## Getting Started
+منصة حجز وإدارة عيادة: حجز أونلاين، استفسارات، مواعيد، حملات إعلانية، ولوحة تحكم للموظفين.
 
-First, run the development server:
+## التشغيل المحلي
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| الصفحة | الرابط المحلي |
+|--------|---------------|
+| الصفحة الرئيسية | http://localhost:3000 |
+| حجز العملاء | http://localhost:3000/book |
+| تسجيل الدخول | http://localhost:3000/login |
+| لوحة التحكم | http://localhost:3000/dashboard |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**التطوير:** الحساب الافتراضي `admin` / `admin123` يُنشأ تلقائياً عند أول تشغيل.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## النشر على Hostinger
 
-## Learn More
+راجع **[HOSTINGER.md](./HOSTINGER.md)** — دليل مخصص لـ Hostinger.
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run prepare:hostinger
+# ارفع hostinger-upload.zip إلى hPanel
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## النشر على VPS / WordPress
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+راجع **[DEPLOYMENT.md](./DEPLOYMENT.md)** للتفاصيل الكاملة.
 
-## Deploy on Vercel
+### الخطوات السريعة
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. انسخ `env.example` إلى `.env.production` واملأ:
+   - `AUTH_SECRET` — `openssl rand -hex 32`
+   - `NEXT_PUBLIC_APP_URL` — مثل `https://book.yourclinic.com`
+   - `INITIAL_ADMIN_PASSWORD` — كلمة مرور أول دخول (10+ أحرف)
+2. `npm ci && npm run build`
+3. شغّل بـ PM2: `pm2 start deploy/ecosystem.config.cjs`
+4. اضبط Nginx (انظر `deploy/nginx-wordpress.conf.example`)
+5. اربط من WordPress زر الحجز إلى `{NEXT_PUBLIC_APP_URL}/book`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## التقنيات
+
+- Next.js 16 (App Router)
+- React 19
+- Tailwind CSS 4
+- TypeScript
+- JSON file database (`data/db.json`)
+
+## ملاحظات الإنتاج
+
+- احفظ نسخة احتياطية من `data/db.json` يومياً
+- غيّر كلمة مرور الأدمن بعد أول دخول
+- روابط الحملات تُبنى من `NEXT_PUBLIC_APP_URL` — تأكد من ضبطه قبل نسخ الروابط
